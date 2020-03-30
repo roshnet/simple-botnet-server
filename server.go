@@ -1,41 +1,49 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"net/http"
-	"os"
-	"strconv"
-	"time"
 )
 
-func createAndRunBotnet(url string, n uint64, c chan string) {
-	port := "4000"
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		go multiStrike(url, n, c)
-		fmt.Fprintf(w, "[RECV]")
-	})
-	http.ListenAndServe(":"+port, nil)
+type botnet struct {
+	targetHost    string
+	serverPort    string
+	weakEndpoints []string
+	maxRoutines   int32
+	httpVerb      string
 }
 
-func main() {
-	if len(os.Args) < 3 {
-		panic("Forgot something maybe?")
-	}
-	TLCallbacks, typeError := strconv.ParseUint(os.Args[2], 0, 64)
-	if typeError != nil {
-		panic("Cannot understand supplied value of top level callbacks.")
+
+// A mandatory method to call after declaring a `botnet`.
+// Initialize the botnet with default values.
+func (b botnet) init() {
+	// The target server (along with port if not 80 or 443)
+	b.targetHost = "http://localhost:8000"
+
+	// Set the port where this script is to be mounted (string)
+	b.serverPort = "8080"
+
+	// A byte-slice of most vulnerable endpoints
+	b.weakEndpoints = []string{
+		"/",
 	}
 
-	url := os.Args[1] // TBD: Add test cases to validate URL structure
-	c := make(chan string)
+	// The default HTTP method to use
+	b.httpVerb = "GET"
+	// TBD: Use a map of endpoints-methods.
 
-	go createAndRunBotnet(url, TLCallbacks, c)
-	fmt.Println("[STANDBY] T minus 3 seconds...")
-	time.Sleep(time.Second * 3)
+	// Set the maximum value of goroutines to execute.
+	// More threads => more load, but higher CPU use.
+	// But, definitely worth increasing if byte amplification is followed.
+	b.maxThreads = 10000
+}
 
-	for i := uint64(0); i < TLCallbacks; i++ {
-		fmt.Println("Listening for callbacks...")
-		<-c
+
+// `attack()` receives no arguments, but utilises all neccessary members of
+// the `botnet` struct
+func (b botnet) attack() {
+	if b.httpVerb == "GET" {
+		_, err := http.Get(b.targetHost)
+		// Checkpoint. Do more stuff later.
 	}
-	<-c
 }

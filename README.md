@@ -1,2 +1,2 @@
 # simple-botnet-server
-Go server acting as a botnet. Not meant for script kiddies.
+Go server acting as a botnet. Unusable by script kiddies.

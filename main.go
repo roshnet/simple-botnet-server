@@ -1,11 +1,13 @@
 package main
 
-import "fmt"
+import (
+	"os"
+)
 
 func main() {
 	bot := &botnet{}
 	bot.init()
 	bot.displayConfig()
 	bot.attack()
-	fmt.Println("FINISH")
+	os.Exit(0)
 }
